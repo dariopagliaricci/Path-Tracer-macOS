@@ -1,0 +1,30 @@
+# ---- Build artifacts ----
+build/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+compile_commands.json
+
+# ---- Render outputs ----
+render.png
+render_*.png
+*.pfm
+*.ppm
+
+# ---- macOS system files ----
+.DS_Store
+
+# ---- VSCode local files ----
+.vscode/
+!.vscode/settings.json     # (keep settings if you want to share them)
+!.vscode/extensions.json   # (optional: share recommended extensions)
+!.vscode/launch.json       # (optional: share debug config)
+
+# ---- Logs / temp ----
+*.log
+*.tmp
+
+# Ignore all .obj except dragon2.obj
+obj/*.obj
+!obj/dragon2.obj
