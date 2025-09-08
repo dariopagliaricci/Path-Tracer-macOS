@@ -1,5 +1,4 @@
 #include <stdlib.h>
-
 #include "vector.h"
 #include "ray.h"
 #include "material.h"
@@ -44,4 +43,5 @@ Ray Material::get_reflected_ray(const Ray &r, Vec &p, const Vec &n,	unsigned sho
 
         return Ray(p, d);
 	}
+    return Ray(p, r.direction);
 }

@@ -8,13 +8,24 @@
 struct Vec {
     double x, y, z;
 
-    Vec(double x_=0, double y_=0, double z_=0) : x(x_), y(y_), z(z_) {}
+    // Keep only this constructor (also acts as default ctor)
+    Vec(double x_=0.0, double y_=0.0, double z_=0.0) : x(x_), y(y_), z(z_) {}
 
-    // Return x,y, and z component for 0, 1, and 2 respectively
-    double axis(uint32_t axis){
-        if (axis == 0) return x;
-        if (axis == 1) return y;
-        if (axis == 2) return z;
+    // Non-const index operator: always returns something
+    inline double& operator[](int i) {
+        if (i == 0) return x;
+        if (i == 1) return y;
+        if (i == 2) return z;
+        static double dummy = 0.0;
+        return dummy;
+    }
+
+    // Const index operator: always returns something
+    inline double operator[](int i) const {
+        if (i == 0) return x;
+        if (i == 1) return y;
+        if (i == 2) return z;
+        return 0.0;
     }
 
     // Vector operations

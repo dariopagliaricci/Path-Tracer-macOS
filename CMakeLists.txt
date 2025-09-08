@@ -1,19 +1,14 @@
-cmake_minimum_required(VERSION 2.8.4)
-project(pathtracer)
+cmake_minimum_required(VERSION 3.20)
+project(pathtracer LANGUAGES CXX C)
 
-if(NOT "${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wno-narrowing -march=native -m64 -O3 -static -funroll-loops")
-endif()
+# Choose your standard (the code is C++11-friendly; C++17 also fine)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-FIND_PACKAGE( OpenMP REQUIRED)
-if(OPENMP_FOUND)
-	message("OPENMP FOUND")
-	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
-	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
-endif()
+option(USE_OPENMP "Enable OpenMP parallel rendering" ON)
 
-set(SOURCE_FILES
+# Sources
+set(SRC
     src/main.cpp
     src/material.cpp
     src/objects.cpp
@@ -24,6 +19,35 @@ set(SOURCE_FILES
     src/renderer.cpp
     lib/rand48/rand48.c
     lib/lodepng/lodepng.cpp
-    lib/tiny_obj_loader/tiny_obj_loader.cc)
+    lib/tiny_obj_loader/tiny_obj_loader.cc
+)
 
-add_executable(pathtracer ${SOURCE_FILES})
+add_executable(pathtracer ${SRC})
+
+target_include_directories(pathtracer PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/src
+    ${CMAKE_CURRENT_SOURCE_DIR}/lib/lodepng
+    ${CMAKE_CURRENT_SOURCE_DIR}/lib/rand48
+    ${CMAKE_CURRENT_SOURCE_DIR}/lib/tiny_obj_loader
+)
+
+# Reasonable, portable optimizations (no -static/-m64/-march=native)
+if (CMAKE_CXX_COMPILER_ID MATCHES "Clang|AppleClang|GNU")
+  target_compile_options(pathtracer PRIVATE -O3 -ffast-math -funroll-loops)
+endif()
+
+# Make asset paths robust (usable from build dir)
+target_compile_definitions(pathtracer PRIVATE
+  ASSET_DIR="${CMAKE_CURRENT_SOURCE_DIR}/obj"
+)
+
+# OpenMP (optional). On macOS prefer Homebrew LLVM or libomp.
+if (USE_OPENMP)
+  find_package(OpenMP)
+  if (OpenMP_CXX_FOUND)
+    target_link_libraries(pathtracer PRIVATE OpenMP::OpenMP_CXX)
+    target_compile_definitions(pathtracer PRIVATE USE_OPENMP=1)
+  else()
+    message(WARNING "OpenMP requested but not found; building without it.")
+  endif()
+endif()

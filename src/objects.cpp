@@ -8,6 +8,8 @@
 #include "objects.h"
 //#include "../lib/fastbvh/BVH.h"
 
+// Define a large finite sentinel instead of using INFINITY with -ffast-math
+constexpr double INF = 1e30;
 
 ObjectIntersection::ObjectIntersection(bool hit_, double u_, Vec n_, Material m_)
 {
@@ -149,7 +151,7 @@ Mesh::Mesh(Vec p_, const char* file_path, Material m_) {
 
 // Check if ray intersects with mesh. Returns ObjectIntersection data structure
 ObjectIntersection Mesh::get_intersection(const Ray &ray) {
-    double t=0, tmin=INFINITY;
+    double t=0, tmin=INF;
     Vec normal = Vec();
     Vec colour = Vec();
     bool hit = node->hit(node, ray, t, tmin, normal, colour);
