@@ -1,9 +1,7 @@
 # Path Tracer (macOS Apple Silicon)
 
 A small CPU Monte Carlo path tracer in C++.  
-Forked from **James Griffin’s** project: https://github.com/JamesGriffin/Path-Tracer (original README excerpted here).
-
-The original project by James Griffin implements a simple path tracer with OBJ mesh loading, KD-tree acceleration, and diffuse/specular/emission materials.  
+Forked from **James Griffin’s** project: https://github.com/JamesGriffin/Path-Tracer
 
 This fork adds:
 
@@ -13,8 +11,8 @@ This fork adds:
 - **RNG seed fix** for `erand48` (no narrowing warnings)
 - **INFINITY → finite sentinel** (no UB warnings under `-ffast-math`)
 - **VS Code** IntelliSense alignment (uses `compile_commands.json`)
-
-> All rendering logic and scene code are by James Griffin; this fork focuses on build polish and small runtime QoL improvements.
+- **Specular and emissive materials** (in addition to diffuse)
+- **Runtime mesh selection**: `--mesh <preset>` (e.g. `lucy`, `sculpt`) and `--obj <path>` for custom OBJs
 
 ---
 
@@ -24,7 +22,7 @@ This fork adds:
 - OBJ model import
 - PNG textures (via [lodepng](https://github.com/lvandeve/lodepng))
 - Simple KD-tree for meshes
-- Diffuse, specular, emission materials
+- Diffuse-only materials (original project)  
 
 ---
 
@@ -46,6 +44,19 @@ $ ./pathtracer <number of samples>
 ```
 This will render the Stanford Dragon scene which is included.
 Take a look at src/main.cpp to see how to create a scene and import objs.
+
+```bash
+# presets
+./build/pathtracer 256 --mesh lucy
+./build/pathtracer --samples 400 --mesh sculpt
+
+# custom OBJ
+./build/pathtracer --obj ./obj/lucy01.obj --samples 128
+
+# legacy flags (still accepted for lucy)
+./build/pathtracer 200 --scene=lucy
+./build/pathtracer 200 --lucy
+```
 
 ## Sample Images
 ![Dabrovic Sponza](doc/example_renders/sponza.png?raw=true "Dabrovic Sponza")
@@ -73,6 +84,8 @@ Cornell Box
 - Replace INFINITY usage under -ffast-math with large finite sentinel
 - Improve VS Code experience (compile_commands, tidy constructors)
 - Provide a simple spheres-only Cornell for quick testing
+- Add specular and emissive materials
+- Add runtime mesh selection via CLI
 
 ## Credits
 - Upstream repo: https://github.com/JamesGriffin/Path-Tracer

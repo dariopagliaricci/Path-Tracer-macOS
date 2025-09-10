@@ -149,13 +149,32 @@ Mesh::Mesh(Vec p_, const char* file_path, Material m_) {
 	//bvh = BVH(&tris);
 }
 
-// Check if ray intersects with mesh. Returns ObjectIntersection data structure
+// // Check if ray intersects with mesh. Returns ObjectIntersection data structure
+// ObjectIntersection Mesh::get_intersection(const Ray &ray) {
+//     double t=0, tmin=INF;
+//     Vec normal = Vec();
+//     Vec colour = Vec();
+//     bool hit = node->hit(node, ray, t, tmin, normal, colour);
+//     //bool hit = bvh.getIntersection(ray, t, tmin, normal);
+//     return ObjectIntersection(hit, tmin, normal, Material(DIFF, colour, Vec()));
+
+// }
+
 ObjectIntersection Mesh::get_intersection(const Ray &ray) {
-    double t=0, tmin=INF;
+    double t = 0, tmin = INF;
     Vec normal = Vec();
     Vec colour = Vec();
     bool hit = node->hit(node, ray, t, tmin, normal, colour);
-    //bool hit = bvh.getIntersection(ray, t, tmin, normal);
-    return ObjectIntersection(hit, tmin, normal, Material(DIFF, colour, Vec()));
 
+    if (!hit) {
+        return ObjectIntersection(false, tmin, normal, m_m);
+    }
+
+    // If the mesh is meant to be diffuse, keep the sampled texture colour (old behavior)
+    if (m_m.get_type() == DIFF) {
+        return ObjectIntersection(true, tmin, normal, Material(DIFF, colour, m_m.get_emission()));
+    }
+
+    // Otherwise (SPEC or EMIT), use the mesh-level material you passed in to Mesh(...)
+    return ObjectIntersection(true, tmin, normal, m_m);
 }

@@ -51,3 +51,18 @@ if (USE_OPENMP)
     message(WARNING "OpenMP requested but not found; building without it.")
   endif()
 endif()
+
+# Use Homebrew LLVM compiler but force system libc++ headers+libs
+if(APPLE AND CMAKE_CXX_COMPILER MATCHES "/opt/homebrew/opt/llvm/bin/clang\\+\\+")
+  # Get the SDK path (where Apple libc++ headers live)
+  execute_process(COMMAND xcrun --show-sdk-path
+                  OUTPUT_VARIABLE MACOS_SDK
+                  OUTPUT_STRIP_TRAILING_WHITESPACE)
+
+  # Do NOT include LLVM's libc++ headers; include the SDK's instead
+  target_compile_options(pathtracer PRIVATE -nostdinc++)
+  target_include_directories(pathtracer SYSTEM PRIVATE "${MACOS_SDK}/usr/include/c++/v1")
+
+  # Link against the system libc++ (no c++abi needed explicitly)
+  #target_link_libraries(pathtracer PRIVATE c++)
+endif()
