@@ -69,11 +69,11 @@ cmake -S . -B build -DEXPERIMENTAL_CAMERA_CLI=ON
 cmake --build build -j
 ```
 
-Or use the preset that already enables it:
+Or use the preset that already enables it (separate build dir: `build-exp/`):
 
 ```
 cmake --preset release-llvm-experimental
-cmake --build build -j
+cmake --build build-exp -j
 ```
 
 2) Use flags at runtime (accepts `x,y,z` or space-separated):
@@ -84,16 +84,17 @@ cmake --build build -j
 Example:
 
 ```
-./build/pathtracer --samples 256 --cam-pos 0,-3.5,1.0 --cam-target 0,0,1
+./build-exp/pathtracer --samples 256 --cam-pos 0,-3.5,1.0 --cam-target 0,0,1
 ```
 
 Notes:
 - If you don’t pass these flags, behavior is identical to the default.
 - Don’t use these flags in CI or reference workflows; they’re intended for local iteration.
+ - Default and experimental builds live in different folders (`build/` vs `build-exp/`), so you can switch by running the corresponding binary without rebuilding.
 
 ### Build and run WITHOUT experimental camera (default/CI)
 
-Use the standard preset (no camera CLI):
+Use the standard preset (no camera CLI, build dir: `build/`):
 
 ```
 cmake --preset release-llvm
@@ -101,7 +102,7 @@ cmake --build build -j
 ./build/pathtracer --samples 256
 ```
 
-Or plain CMake without the preset:
+Or plain CMake without the preset (build dir: `build/`):
 
 ```
 cmake -S . -B build

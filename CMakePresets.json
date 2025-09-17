@@ -19,6 +19,7 @@
       "name": "release-llvm-experimental",
       "displayName": "Release (LLVM) + Experimental camera CLI",
       "inherits": ["release-llvm"],
+      "binaryDir": "${sourceDir}/build-exp",
       "cacheVariables": {
         "EXPERIMENTAL_CAMERA_CLI": "ON"
       }
