@@ -73,7 +73,7 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    Camera camera = Camera(Vec(0, -2.9, 1.0), Vec(0,0,1), 1280, 720);     // Create camera
+    Camera camera = Camera(Vec(0, -4, 1.0), Vec(0,0,1), 1280, 720);     // Create camera
     Scene scene = Scene();                                              // Create scene
 
     // Add objects to scene
