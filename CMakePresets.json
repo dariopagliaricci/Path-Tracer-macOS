@@ -14,6 +14,14 @@
         "CMAKE_EXE_LINKER_FLAGS": "-L/opt/homebrew/opt/llvm/lib -Wl,-rpath,/opt/homebrew/opt/llvm/lib",
         "CMAKE_CXX_FLAGS": "-I/opt/homebrew/opt/llvm/include"
       }
+    },
+    {
+      "name": "release-llvm-experimental",
+      "displayName": "Release (LLVM) + Experimental camera CLI",
+      "inherits": ["release-llvm"],
+      "cacheVariables": {
+        "EXPERIMENTAL_CAMERA_CLI": "ON"
+      }
     }
   ]
 }
