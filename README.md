@@ -1,9 +1,9 @@
 # Path Tracer (macOS Apple Silicon)
 
-A small CPU Monte Carlo path tracer in C++.  
-Forked from **James Griffin’s** project: https://github.com/JamesGriffin/Path-Tracer
+A small CPU Monte Carlo path tracer in C++.
+Originally based on **James Griffin’s** Path Tracer: https://github.com/JamesGriffin/Path-Tracer
 
-This fork adds:
+This project adds/extends:
 
 - **macOS / Apple Silicon** one-command build via CMake Presets (Homebrew **LLVM**)
 - **OpenMP** multithreading enabled by default (with LLVM)
@@ -15,6 +15,15 @@ This fork adds:
 - **Runtime mesh selection**: `--mesh <preset>` (e.g. `lucy`, `sculpt`) and `--obj <path>` for custom OBJs
 
 ---
+
+## What’s New (2025-09-17)
+
+- Default camera set to `pos=Vec(0,-4,1.0)`, `target=Vec(0,0,1)` for consistent framing.
+- Optional camera overrides via CLI: `--cam-pos x,y,z`, `--cam-target x,y,z`.
+	- Disabled by default; enable with `-DEXPERIMENTAL_CAMERA_CLI=ON`.
+	- New preset: `release-llvm-experimental` enables it automatically.
+- README updated with English docs and clear local vs CI guidance.
+- Build remains reproducible by default (CI unaffected unless you opt in locally).
 
 ## Features (from the original project)
 
@@ -60,6 +69,13 @@ cmake -S . -B build -DEXPERIMENTAL_CAMERA_CLI=ON
 cmake --build build -j
 ```
 
+Or use the preset that already enables it:
+
+```
+cmake --preset release-llvm-experimental
+cmake --build build -j
+```
+
 2) Use flags at runtime (accepts `x,y,z` or space-separated):
 
 - `--cam-pos x,y,z`     (e.g., `--cam-pos 0,-3.5,1.0`)
@@ -74,6 +90,24 @@ Example:
 Notes:
 - If you don’t pass these flags, behavior is identical to the default.
 - Don’t use these flags in CI or reference workflows; they’re intended for local iteration.
+
+### Build and run WITHOUT experimental camera (default/CI)
+
+Use the standard preset (no camera CLI):
+
+```
+cmake --preset release-llvm
+cmake --build build -j
+./build/pathtracer --samples 256
+```
+
+Or plain CMake without the preset:
+
+```
+cmake -S . -B build
+cmake --build build -j
+./build/pathtracer --samples 256
+```
 
 This will render the Stanford Dragon scene which is included.
 Take a look at src/main.cpp to see how to create a scene and import objs.
@@ -110,7 +144,7 @@ Stanford Lucy  - http://graphics.stanford.edu/data/3Dscanrep
 
 Cornell Box
 
-## Changelog (this fork)
+## Changelog (this project)
 - Add macOS-first CMake preset (Homebrew LLVM + OpenMP)
 - Add progress bar (thread-safe, shows ETA)
 - Fix erand48 seeding (no unsigned short narrowing)
@@ -126,4 +160,4 @@ Cornell Box
 
 ## License
 - Original code © James Griffin — GNU GPL v2.0 (see LICENSE).
-- This fork (build scripts and small patches) remains GPL v2.0.
+- This project remains GPL v2.0 and does not actively track upstream; changes and CI policies are maintained independently.
