@@ -6,6 +6,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 option(USE_OPENMP "Enable OpenMP parallel rendering" ON)
+option(EXPERIMENTAL_CAMERA_CLI "Enable CLI flags for camera (local only)" OFF)
 
 # Sources
 set(SRC
@@ -40,6 +41,10 @@ endif()
 target_compile_definitions(pathtracer PRIVATE
   ASSET_DIR="${CMAKE_CURRENT_SOURCE_DIR}/obj"
 )
+
+if (EXPERIMENTAL_CAMERA_CLI)
+  target_compile_definitions(pathtracer PRIVATE EXPERIMENTAL_CAMERA_CLI=1)
+endif()
 
 # OpenMP (optional). On macOS prefer Homebrew LLVM or libomp.
 if (USE_OPENMP)

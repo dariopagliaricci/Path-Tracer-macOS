@@ -42,6 +42,39 @@ Run:
 ```
 $ ./pathtracer <number of samples>
 ```
+Dabrovic Sponza - http://hdri.cgtechniques.com/~sponza/files/
+
+## CLI (opcional, local)
+
+Por defecto, la cámara es fija para garantizar reproducibilidad en CI y resultados comparables:
+
+- Posición: `Vec(0, -4, 1.0)`
+- Objetivo: `Vec(0, 0, 1)`
+
+Para habilitar flags de cámara solo para uso local, activa la opción CMake `EXPERIMENTAL_CAMERA_CLI`:
+
+1) Configurar build con la opción:
+
+```
+cmake -S . -B build -DEXPERIMENTAL_CAMERA_CLI=ON
+cmake --build build -j
+```
+
+2) Usar flags al ejecutar (formato `x,y,z` o con espacios):
+
+- `--cam-pos x,y,z`     (ej. `--cam-pos 0,-3.5,1.0`)
+- `--cam-target x,y,z`  (ej. `--cam-target 0,0,1`)
+
+Ejemplo:
+
+```
+./build/pathtracer --samples 256 --cam-pos 0,-3.5,1.0 --cam-target 0,0,1
+```
+
+Notas:
+- Si no pasas estos flags, el comportamiento es idéntico al default.
+- No usar estos flags en CI ni en workflows de referencia; están pensados para iteración local.
+
 This will render the Stanford Dragon scene which is included.
 Take a look at src/main.cpp to see how to create a scene and import objs.
 

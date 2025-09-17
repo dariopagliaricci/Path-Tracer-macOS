@@ -30,6 +30,30 @@ static const char* getFlagValue(int argc, char** argv, const char* key) {
     return nullptr;
 }
 
+// Simple "x,y,z" parser with comma or space separators.
+// Accepts forms like: "1,2,3", "1 2 3", "1.0, -2.5, 3" (spaces allowed)
+static bool parseVec3(const char* s, Vec& out) {
+    if (!s) return false;
+    // Create a small copy we can mutate to normalize separators
+    std::string tmp(s);
+    for (char& c : tmp) {
+        if (c == ',') c = ' ';
+    }
+    // Now we expect three numbers separated by spaces (possibly multiple)
+    const char* p = tmp.c_str();
+    char* end = nullptr;
+    double x = std::strtod(p, &end);
+    if (end == p) return false;
+    p = end;
+    double y = std::strtod(p, &end);
+    if (end == p) return false;
+    p = end;
+    double z = std::strtod(p, &end);
+    if (end == p) return false;
+    out = Vec(x, y, z);
+    return true;
+}
+
 // static bool wantLucy(int argc, char** argv) {
 //     for (int i = 1; i < argc; ++i) {
 //         if (std::strcmp(argv[i], "--lucy") == 0) return true;
@@ -73,7 +97,34 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    Camera camera = Camera(Vec(0, -4, 1.0), Vec(0,0,1), 1280, 720);     // Create camera
+    // Camera defaults (reproducible in CI)
+    Vec camPosDefault(0, -4, 1.0);
+    Vec camTargetDefault(0, 0, 1);
+
+    Vec camPos = camPosDefault;
+    Vec camTarget = camTargetDefault;
+
+    // Optional: CLI camera overrides (opt-in at compile time)
+    #ifdef EXPERIMENTAL_CAMERA_CLI
+    if (const char* v = getFlagValue(argc, argv, "--cam-pos")) {
+        Vec parsed;
+        if (parseVec3(v, parsed)) {
+            camPos = parsed;
+        } else {
+            std::fprintf(stderr, "Invalid --cam-pos '%s' (expected x,y,z)\n", v);
+        }
+    }
+    if (const char* v = getFlagValue(argc, argv, "--cam-target")) {
+        Vec parsed;
+        if (parseVec3(v, parsed)) {
+            camTarget = parsed;
+        } else {
+            std::fprintf(stderr, "Invalid --cam-target '%s' (expected x,y,z)\n", v);
+        }
+    }
+    #endif
+
+    Camera camera = Camera(camPos, camTarget, 1280, 720);     // Create camera
     Scene scene = Scene();                                              // Create scene
 
     // Add objects to scene
