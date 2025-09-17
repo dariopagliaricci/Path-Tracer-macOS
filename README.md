@@ -44,36 +44,36 @@ $ ./pathtracer <number of samples>
 ```
 Dabrovic Sponza - http://hdri.cgtechniques.com/~sponza/files/
 
-## CLI (opcional, local)
+## CLI (optional, local)
 
-Por defecto, la cámara es fija para garantizar reproducibilidad en CI y resultados comparables:
+By default, the camera is fixed to guarantee reproducibility in CI and comparable results:
 
-- Posición: `Vec(0, -4, 1.0)`
-- Objetivo: `Vec(0, 0, 1)`
+- Position: `Vec(0, -4, 1.0)`
+- Target: `Vec(0, 0, 1)`
 
-Para habilitar flags de cámara solo para uso local, activa la opción CMake `EXPERIMENTAL_CAMERA_CLI`:
+To enable camera flags for local-only use, turn on the CMake option `EXPERIMENTAL_CAMERA_CLI`:
 
-1) Configurar build con la opción:
+1) Configure the build with the option:
 
 ```
 cmake -S . -B build -DEXPERIMENTAL_CAMERA_CLI=ON
 cmake --build build -j
 ```
 
-2) Usar flags al ejecutar (formato `x,y,z` o con espacios):
+2) Use flags at runtime (accepts `x,y,z` or space-separated):
 
-- `--cam-pos x,y,z`     (ej. `--cam-pos 0,-3.5,1.0`)
-- `--cam-target x,y,z`  (ej. `--cam-target 0,0,1`)
+- `--cam-pos x,y,z`     (e.g., `--cam-pos 0,-3.5,1.0`)
+- `--cam-target x,y,z`  (e.g., `--cam-target 0,0,1`)
 
-Ejemplo:
+Example:
 
 ```
 ./build/pathtracer --samples 256 --cam-pos 0,-3.5,1.0 --cam-target 0,0,1
 ```
 
-Notas:
-- Si no pasas estos flags, el comportamiento es idéntico al default.
-- No usar estos flags en CI ni en workflows de referencia; están pensados para iteración local.
+Notes:
+- If you don’t pass these flags, behavior is identical to the default.
+- Don’t use these flags in CI or reference workflows; they’re intended for local iteration.
 
 This will render the Stanford Dragon scene which is included.
 Take a look at src/main.cpp to see how to create a scene and import objs.
